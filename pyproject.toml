@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "vibee-server"
+name = "tee-baker-server"
 version = "0.1.0"
-description = ""
-authors = ["Huzaifa-Office <huzaifa.arshad@emumba.com>"]
+description = "Backend server for tee-baker app which is used to generate t-shirt design"
+authors = ["Huzaifa Arshad <huzaifa.arshad@emumba.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = "^0.109.2"
-uvicorn = {extras = ["standard"], version = "^0.27.1"}
+fastapi = "^0.111.1"
 
 
 [build-system]
