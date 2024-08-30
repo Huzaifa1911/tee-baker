@@ -1,12 +1,10 @@
 from sqlalchemy import Column, String, Date, Enum, Boolean
 from sqlalchemy.dialects.postgresql import UUID
-from app.core.models import TimestampMixin
 from uuid import uuid4
 
-
 from ...core.database import Base
-from .schemas import GenderEnum
-
+from ...core.schemas import GenderEnum
+from ...core.models import TimestampMixin
 
 class User(Base, TimestampMixin):
     __tablename__ = "users"

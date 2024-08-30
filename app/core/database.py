@@ -12,7 +12,7 @@ Base = declarative_base()
 
 
 def get_db() -> Generator[Session, None, None]:
-    db_session = sessionmaker(autoflush=False, bind=engine)
+    db_session = sessionmaker(autoflush=False, bind=engine)()
     try:
         yield db_session
     finally:
