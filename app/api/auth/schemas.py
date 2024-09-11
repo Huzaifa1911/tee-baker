@@ -16,7 +16,7 @@ class UserBase(BaseModel):
     bio: str | None = None
     profile_url: str | None = None
     is_active: bool = True
-    is_super: Annotated[bool, Field(default=False, exclude=True)]
+    is_super: bool = False
 
 
 # Properties to receive via API on create
