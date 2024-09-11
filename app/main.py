@@ -4,6 +4,8 @@ from starlette.middleware.cors import CORSMiddleware
 
 from .api.main import api_router
 from .core.config import api_settings
+from .core.middlewares import log_request_middleware
+from .core.schemas.response import DefaultResponse
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -15,6 +17,7 @@ def create_application() -> FastAPI:
         title=api_settings.PROJECT_NAME,
         description=f"${api_settings.PROJECT_NAME} server",
         custom_generate_unique_id=custom_generate_unique_id,
+        default_response_class=DefaultResponse,
     )
 
     if api_settings.BACKEND_CORS_ORIGINS:
@@ -27,6 +30,8 @@ def create_application() -> FastAPI:
             allow_methods=["*"],
             allow_headers=["*"],
         )
+    application.middleware("http")(log_request_middleware)
+
     application.include_router(router=api_router, prefix=api_settings.API_V1_STR)
     return application
 

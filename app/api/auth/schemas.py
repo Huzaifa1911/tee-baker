@@ -1,8 +1,9 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
+from typing import Annotated
 import uuid
 from datetime import date
 
-from ...core.schemas import GenderEnum
+from ...core.schemas.enums import GenderEnum
 
 
 # Shared properties
@@ -10,12 +11,12 @@ class UserBase(BaseModel):
     full_name: str
     user_name: str
     email: EmailStr
-    gender: list[GenderEnum]
+    gender: GenderEnum
     dob: date
-    bio: str | None
-    profile_url: str | None
+    bio: str | None = None
+    profile_url: str | None = None
     is_active: bool = True
-    is_super: bool = False
+    is_super: Annotated[bool, Field(default=False, exclude=True)]
 
 
 # Properties to receive via API on create
@@ -28,7 +29,7 @@ class UserUpdate(UserBase):
     full_name: str | None
     user_name: str | None
     email: EmailStr | None
-    gender: list[GenderEnum] | None
+    gender: GenderEnum | None
     dob: date | None
 
 

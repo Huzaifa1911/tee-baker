@@ -1,15 +1,16 @@
 import jwt
-from jwt.exceptions import JWSDecodeError
+from jwt.exceptions import InvalidTokenError
 from pydantic import ValidationError
 from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, status, HTTPException
 
 from ..core.database import SessionDep
 from ..core.config import api_settings
 from .auth.utils import ALGORITHM
 from .auth.models import User
 from .auth.schemas import TokenPayload
+from ..core.exceptions.common import ResourceNotFoundException
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{api_settings.API_V1_STR}/access-token"
@@ -26,7 +27,7 @@ def get_current_user(
         payload = jwt.decode(token, api_settings.SECRET_KEY, algorithms=[ALGORITHM])
         token_data = TokenPayload(**payload)
 
-    except (JWSDecodeError, ValidationError):
+    except (InvalidTokenError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
@@ -35,9 +36,7 @@ def get_current_user(
     user = session.get(User, token_data.sub)
 
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
+        raise ResourceNotFoundException(id=token_data.sub, resourceType="User")
 
     if not user.is_active:
         raise HTTPException(

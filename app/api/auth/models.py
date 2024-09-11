@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from uuid import uuid4
 
 from ...core.database import Base
-from ...core.schemas import GenderEnum
+from ...core.schemas.enums import GenderEnum
 from ...core.models import TimestampMixin
 
 class User(Base, TimestampMixin):

@@ -2,12 +2,7 @@ import secrets
 import warnings
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Literal, Annotated, Any
-from pydantic import (
-    AnyUrl,
-    BeforeValidator,
-    PostgresDsn,
-    computed_field,
-)
+from pydantic import AnyUrl, BeforeValidator, PostgresDsn, computed_field, EmailStr
 from pydantic_core import MultiHostUrl
 
 
@@ -44,6 +39,7 @@ class ApiSettings(BaseSettings):
         []
     )
 
+    # DB Creds
     PROJECT_NAME: str
     POSTGRES_HOST: str
     POSTGRES_PORT: int = 5432
@@ -62,6 +58,25 @@ class ApiSettings(BaseSettings):
             port=self.POSTGRES_PORT,
             path=self.POSTGRES_DB,
         )
+
+    # SMTP Creds
+    SMTP_TLS: bool = True
+    SMTP_SSL: bool = False
+    SMTP_PORT: int = 587
+    SMTP_HOST: str | None = None
+    SMTP_USER: str | None = None
+    SMTP_PASSWORD: str | None = None
+
+    # Emails
+    EMAILS_FROM_EMAIL: EmailStr
+    EMAILS_FROM_NAME: str | None = None
+    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
+    EMAIL_TEST_USER: EmailStr = "test@example.com"
+
+    @computed_field
+    @property
+    def emails_enabled(self) -> bool:
+        return bool(self.SMTP_HOST and self.EMAILS_FROM_EMAIL)
 
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "changethis":
